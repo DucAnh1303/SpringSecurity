@@ -25,7 +25,7 @@ public class UserService implements UserDetailsService {
         return new CustomUserDetails(user);
     }
 
-    public UserDetails loadUserByUsername(int id){
+    public UserDetails loadUserByUserId(int id){
         User user = userRepository.findAllById(id);
         if (user == null) {
             throw new UsernameNotFoundException("exception");

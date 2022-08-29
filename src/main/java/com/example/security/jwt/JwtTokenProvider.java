@@ -6,6 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 @Slf4j
@@ -21,21 +23,23 @@ public class JwtTokenProvider {
         Date expiryDate = new Date(now.getTime() + JWT_EXPIRATION);
         // Tạo chuỗi json web token từ userName của user.
         return Jwts.builder()
-                .setSubject(String.valueOf(userDetails.getUser().getId()))
+                .setSubject(userDetails.getUser().getUsername())
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
                 .signWith(SignatureAlgorithm.HS512, JWT_SECRET)
+                .claim("role",userDetails.getUser().getRoles().toString())
                 .compact();
+
     }
 
     // Lấy thông tin user từ jwt
-    public int getUserIdFromJWT(String token) {
+    public String getUserNameFromJWT(String token) {
         Claims claims = Jwts.parser()
                 .setSigningKey(JWT_SECRET)
                 .parseClaimsJws(token)
                 .getBody();
 
-        return Integer.parseInt(claims.getSubject());
+        return claims.getSubject();
     }
 
     public boolean validateToken(String authToken) {
